@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <assert.h>
 #include <queue>
 #include <stack>
 #include <any>
@@ -27,7 +28,7 @@ void arr_print(vector<int> z) {
     return;
 }
 
-int marks[MAX], n;
+int marks[MAX], max_marks[MAX], n;
 ll sum;
 
 // =============================================
@@ -87,21 +88,20 @@ int main() {
     for (int i = 0; i < n; i++) {
         cin >> marks[i];
         if (marks[i] > max_mark) {
-            agg_max = marks[i] - 1;
-            for (int j = i - 1; j > prev_max_id; j--) {
-                int aggr = agg_max - marks[j];
-                // cout << aggr << " ";
-                sum += aggr;
-                agg_max -= (marks[j] == 0 && agg_max > max_mark);
-            }
-            // cout << "\n";
-            // assert(agg_max == prev_max);
-            prev_max_id = i;
-            prev_max = marks[i];
             max_mark = marks[i];
-            // cout << sum << "\n";
+            max_marks[i] = max_mark;
+            prev_max_id = i;
         }
     }
+    agg_max = marks[prev_max_id] - 1;
+    for (int j = prev_max_id - 1; j > 0; j--) {
+        int aggr = agg_max - marks[j];
+        cout << aggr << " ";
+        sum += aggr;
+        agg_max -= (marks[j] == 0 && agg_max > max_marks[j]);
+        cout << sum << "\n";
+    }
+    // cout << sum << "\n";
     
     for (int j = n - 1; j > prev_max_id; j--)
         sum += max_mark - marks[j];

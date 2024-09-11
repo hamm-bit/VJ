@@ -111,20 +111,12 @@ int main() {
     }
 
     ll sum = b + c;
-    if (num0 <= 0) {
-        cout << "impossible\n";
-        return 0;
-    }
     if (sum % num0 != 0) {
         cout << "impossible\n";
         return 0;
     }
 
     num1 = sum / num0;
-    if (num1 <= 0) {
-        cout << "impossible\n";
-        return 0;
-    }
     if (num1 * (num1 - 1) / 2 != d) {
         cout << "impossible\n";
         return 0;
@@ -134,11 +126,13 @@ int main() {
     int zero_l = b / num1;
     int zero_m = b % num1;
     
-    string output = string(zero_l, '0') + \
-                    string(num1 - zero_m, '1') + \
-                    string(1, '0') + \
-                    string(zero_m, '1') + \
-                    string((num0 - zero_l - 1), '0');
+    string output = (zero_l == num0) ? \
+        string(zero_l, '0') + string(num1, '1') : \
+        string(zero_l, '0') + \
+        string(num1 - zero_m, '1') + \
+        string(1, '0') + \
+        string(zero_m, '1') + \
+        string((num0 - zero_l - 1), '0');
     cout << output << "\n";
     return 0;
 }
