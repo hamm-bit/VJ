@@ -69,6 +69,28 @@ ll sum;
  *      // if no new limit, do nothing
 `*/
 
+/*
+    The above is wrong
+    It has ignored the possibility of new `max_value` 
+    actually <= the number of marks created in total
+    Counter this by adding
+    ```cpp
+        if (max_marks[j] == marks[j] && max_marks[j - 1] < max_marks[j])
+            agg_max -= (agg_max == max_marks[j]);
+    ````
+*/
+
+/*
+ *  We can give our algorithm additional memory by counting the number of
+ *  0s occured, to determine it appropriate position during the descent.
+ *
+ */
+
+// Fuck it rewrite
+
+/*
+ * We can count upwards
+ */
 
 
 // =============================================
@@ -84,27 +106,16 @@ int main() {
     // ======== Main begins here ========
     int prev_max = -1, prev_max_id = -1, max_mark = -1, agg_max = -1;
     cin >> n;
-    
-    for (int i = 0; i < n; i++) {
+
+    for (int i = 1; i <= n; i++) {
         cin >> marks[i];
-        if (marks[i] > max_mark) {
-            max_mark = marks[i];
-            max_marks[i] = max_mark;
-            prev_max_id = i;
-        }
+        max_marks[i] = max(max_marks[i - 1], marks[i]);
     }
-    agg_max = marks[prev_max_id] - 1;
-    for (int j = prev_max_id - 1; j > 0; j--) {
-        int aggr = agg_max - marks[j];
-        cout << aggr << " ";
-        sum += aggr;
-        agg_max -= (marks[j] == 0 && agg_max > max_marks[j]);
-        cout << sum << "\n";
+    agg_max = max_marks[n] + 1;
+    for (int i = n; i > 0; i--) {
+        agg_max -= (agg_max > max_marks[i] + 1);
+        sum += agg_max - 1 - marks[i];
     }
-    // cout << sum << "\n";
-    
-    for (int j = n - 1; j > prev_max_id; j--)
-        sum += max_mark - marks[j];
 
     cout << sum << "\n";
     return 0;
