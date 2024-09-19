@@ -9,7 +9,6 @@
 #include <optional>
 #include <algorithm>
 #include <numeric>
-#include <climits>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -59,6 +58,14 @@ int b_search(int i) {
 // ======== Custom functions begin here ========
 // =============================================
 
+// UPDATE: check the priority of the last character everytime.
+// Since the number of `+` is bounded by 26, its constant
+inline int tot_str(vector<int> freq, int i) {
+    int sum = 0;
+    for (int j = 0; j < i; j++)
+        sum += freq[j];
+    return sum;
+}
 
 
 int main() {
@@ -66,6 +73,28 @@ int main() {
     cin.tie(nullptr);
 
     // ======== Main begins here ========
+    string in, t, u;
+    cin >> in;
+    int n = in.length();
+    vector<int> freq(26);
+    for (int i = 0; i < n; i++)
+        freq[in[i] - 'a']++;
 
+    // backward sweep and collect the chars
+    // at the same time decide if to draw from the final char.
+    // the lexicographical order of a substring is minimized
+    // when they are emptied out from the frequency table in order.
+    //
+    // UPDATE: remove condition for 'a'
+    for (char c : in) {
+        t += c;
+        freq[c - 'a']--;
+        while (!(t.empty()) && tot_str(freq, t.back() - 'a') == 0) {
+            // greedy avail
+            u += t.back();
+            t.pop_back();
+        }
+    }
+    cout << u << "\n";
     return 0;
 }

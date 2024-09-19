@@ -115,6 +115,7 @@ int main() {
     for (int i = n; i > 0; i--) {
         agg_max -= (agg_max > max_marks[i] + 1);
         sum += agg_max - 1 - marks[i];
+        cout << agg_max << " " << sum << "\n";
     }
 
     cout << sum << "\n";
