@@ -1,15 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <queue>
-#include <stack>
-#include <any>
-#include <optional>
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
-
+#include <bits/stdc++.h>
 using namespace std;
 
 #define ll long long

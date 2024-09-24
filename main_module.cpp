@@ -1,22 +1,16 @@
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <queue>
-#include <stack>
-#include <any>
-#include <optional>
+#include <bits/stdc++.h>
 #include <algorithm>
-#include <numeric>
-#include <climits>
-#include <unordered_map>
-#include <unordered_set>
+#include <array>
+#include <functional>
+#include <queue>
+#include <utility>
 
 using namespace std;
 
 #define ll long long
 #define ull unsigned long long
+#define F first
+#define S second
 
 // Edit based on given Qs
 const int nMOD = (int) 1e9;
@@ -25,29 +19,21 @@ const ll MAX = 1e5 + 5;
 // vector<int> DP(MAX);
 // vector<vector<int>> DP(MAX, vector<int> MAX);
 
-void arr_print(vector<int> z) {
-    for (int i : z) {
-        cout << i << " ";
-    } cout << "\n";
+void arr_print(array<pair<int, int>, MAX> z, int m) {
+    cout << "\n========================================\n";
+    for (int i = 0; i < m; i++) {
+        cout << z[i].first << " " << z[i].second << "\n";
+    }
+    cout << "\n========================================\n";
     return;
 }
 
-// Change for suitability
-/*
-int b_search(int i) {
-    ll l = 0ll, r = DP.size();
-    ll mid = l + (r - l) / 2, old_mid = -1ll;
-    while (l <= r) {
-        if (DP[mid] == i || mid == old_mid)
-            break;
-        else if (DP[mid] > i)
-            r = mid;
-        else
-            l = mid;
+void arr_print(array<int, MAX> z, int s, int f) {
+    for (int i = s; i < f; i++) {
+        cout << z[i] << " ";
     }
-    return mid;
+    return;
 }
-*/
 
 // =============================================
 // ======== Global variables begin here ========
@@ -56,8 +42,26 @@ int b_search(int i) {
 
 
 // =============================================
-// ======== Custom functions begin here ========
+// ======== Custom functiobugs begin here ========
 // =============================================
+
+
+
+// Change for suitability
+// Implement the lower bound functiobugs
+int b_search(int m) {
+    ll l = 0ll, r = m;
+    ll mid, old_mid = -1ll;
+    while (l < r - 1) {
+        mid = (l + r) / 2;
+        if (mid)
+            r = mid;
+        else
+            l = mid;
+    }
+    return r;
+}
+
 
 
 
