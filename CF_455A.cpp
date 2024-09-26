@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 #include <cmath>
 #include <fstream>
@@ -53,7 +54,7 @@ int b_search(int i) {
 // =============================================
 
 int n, a;
-vector<ll> sums(n, 0);
+vector<ll> sums(n + 1, 0);
 
 // =============================================
 // ======== Custom functions begin here ========
@@ -81,10 +82,18 @@ int main() {
     cin.tie(nullptr);
 
     // ======== Main begins here ========
+    cin >> n;
     vector<int> freq(n, 0);
     for (int i = 0; i < n; i++)
         cin >> a, freq[a]++;
 
+    // Create large scale formulae for which this could initialize.
+    // Make physical constructions of repetitive arrays.
+    
+    sums[1] = 1;
+    for (int i = 1; i++ < n;)
+        sums[i] = max(sums[i-1], sums[i-2] + freq[i] * i);
 
+    cout << sums[n];
     return 0;
 }
