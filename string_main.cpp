@@ -5,8 +5,8 @@ using namespace std;
 #define ull unsigned long long
 
 // Edit based on given Qs
-const int nMOD = (int) 1e9;
-const ll MAX = 1e5;
+const int nMOD = (int) 1e9 + 7;
+const ll MAX = 1e5 + 5;
 
 void arr_print(vector<int> z) {
     for (int i : z) {

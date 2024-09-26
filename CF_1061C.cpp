@@ -35,7 +35,7 @@ void arr_print(array<int, MAX> z, int s, int f) {
     return;
 }
 
-// Credit to Neal Wu's blog (https://codeforces.com/blog/entry/62393)                                                   
+// Credit to Neal Wu's blog (https://codeforces.com/blog/entry/62393)
 // And Sebastiano Vigna for authoring splitmix64
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
@@ -87,6 +87,8 @@ int main() {
     cin.tie(nullptr);
 
     // ======== Main begins here ========
+    
+
 
     return 0;
 }

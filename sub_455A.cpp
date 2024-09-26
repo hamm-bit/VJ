@@ -4,7 +4,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <array>
 #include <queue>
 #include <stack>
 #include <any>
@@ -54,8 +53,8 @@ int b_search(int i) {
 // ======== Global variables begin here ========
 // =============================================
 
-int n, a, amax = -1;
-array<ll, MAX> sums{}, freq{};
+int n, a;
+array<ll, MAX> sums{};
 
 // =============================================
 // ======== Custom functions begin here ========
@@ -84,13 +83,18 @@ int main() {
 
     // ======== Main begins here ========
     cin >> n;
+    vector<int> freq(n, 0);
     for (int i = 0; i < n; i++)
-        cin >> a, freq[a]++, amax = max(amax, a);
+        cin >> a, freq[a]++;
 
+    // Create large scale formulae for which this could initialize.
+    // Make physical constructions of repetitive arrays.
+    
     sums[1] = freq[1];
-    for (int i = 1; i++ < amax;)
+    for (int i = 1; i++ < n;)
         sums[i] = max(sums[i-1], sums[i-2] + freq[i] * i);
 
-    cout << sums[amax];
+    cout << sums[n];
     return 0;
 }
+
