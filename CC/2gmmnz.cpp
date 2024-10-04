@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <bits/stdc++.h>
 #include <queue>
 #include <utility>
@@ -44,10 +45,11 @@ struct custom_hash {
 
 int n, m, q, a, k, x, y;
 vector<array<int, 3>> rds;
-array<vector<int>, MAX> adj;
+vector<vector<int>> adj;
 array<int, MAX> ranks{}, pops{}, Ks, As, xs;
-vector<pair<int, ll>> parents;
-priority_queue<ll> un_sum;
+array<pair<int, ll>, MAX> parents;
+multiset<ll, greater<ll>> un_sum;
+
 
 // =================n============================
 // ======== Custom functions begin here ========
@@ -74,16 +76,16 @@ int find_set(int v) {
 * UF union two superset (if not the same)
 * Grows from maximum rank
 */
-void union_sets(int a, int b) {
-    a = find_set(a);
-    b = find_set(b);
-    if (a != b) {
-        if (ranks[a] < ranks[b])
-            swap(a, b);
-        parents[b].first = a;
-        parents[b].second += parents[a].second; 
-        if (ranks[a] == ranks[b])
-            ranks[a]++;
+void union_sets(int l, int r) {
+    l = find_set(l);
+    r = find_set(r);
+    if (l != r) {
+        if (ranks[l] < ranks[r])
+            swap(l, r);
+        parents[r].first = l;
+        parents[l].second += parents[r].second; 
+        if (ranks[l] == ranks[r])
+            ranks[l]++;
     }
 }
 
@@ -95,85 +97,140 @@ int main() {
     cin.tie(nullptr);
     char op;
     queue<ll> ans;
+    rds.push_back({0, 0, 1});
 
     // ======== Main begins here ========
     cin >> n >> m >> q;
     for (int i = 0; i++ < n;)
         cin >> pops[i];
-    cout << "Output ended\n";
+    adj.resize(n + 2);
+    adj[0].push_back(0);
 
     for (int i = 0; i++ < m;) {
         cin >> x >> y;
-        array<int, 3> in{{x, y, 0}};
-        rds.push_back(in);
+        rds.push_back({x, y, 0});
     }
 
-    cout << "Output ended\n";
-
     // Convert the queries to be in reverse order
+    int prev_pop = -1;
     for (int i = 0; i++ < q;) {
+        cin >> op;
         if (op == 'D') {
             cin >> k, Ks[i] = k;
             rds[k][2] = 1;
         } else if (op == 'P') {
-            cin >> As[i] >> xs[i];
-            pops[As[i]] = xs[i];
+            cin >> As[i] >> x;
+            xs[i] = pops[As[i]];
+            pops[As[i]] = x;
         } else {
             // debug op
         }
     }
 
-    for (int i = 0; i++ < m;) {
-        if (rds[i][2]) continue;
-        adj[rds[i][0]].push_back(rds[i][1]);
-        adj[rds[i][1]].push_back(rds[i][0]);
+    /*
+    for (auto arr : rds) {
+        for (int num : arr)
+            cout << num << " ";
+        cout << "\n";
     }
+    */
+    
+    // cout << adj[n-1].size();
+
+    for (int i = 0; i++ < m;) {
+        if (rds[i][2]) 
+            continue;
+        adj[rds[i][0]].push_back(rds[i][1]);
+        cout << adj[rds[i][0]].front() << " ";
+        adj[rds[i][1]].push_back(rds[i][0]);
+        cout << adj[rds[i][1]].front() << "\n";
+    }
+
+    // ==========================================
+    for (int i = 0, mm = 0; i++ < n && mm < m;) {
+        // cout << (sizeof(adj[i]));
+        for (int j = 0; j++ < adj[i].size();mm++)
+            cout << adj[i][j] << " ";
+        cout << "\n";
+    }
+    // ==========================================
 
     // First BFS to find all regions' pops
     array<bool, MAX> gvisited{};
     queue<int> tobe;
-    for (int j = 1; j++ < q;) {
+    for (int j = 0; j++ < n;) {
         if (gvisited[j])
             continue;
 
         array<bool, MAX> visited{};
         make_set(j), tobe.push(j);
-        gvisited[j] = 1, visited[j] = 1;
+        visited[j] = 1, gvisited[j] = 1;
 
-        while (!tobe.empty()) {
-            int curr = tobe.front();
-            tobe.pop();
-            // cout << curr << " ";
-
-            for (int x : adj[j]) {
-                if (!visited[x]) {
-                    visited[x] = 1, tobe.push(x);
-                    union_sets(j, x);
+        for (int curr = tobe.front(); !tobe.empty(); tobe.pop(), curr = tobe.front()) {
+            // curr src node printer
+            cout << curr << " ";
+            if (adj[curr].size() == 0)
+                continue;
+            for (int nd : adj[curr]) {
+                if (!visited[nd]) {
+                    make_set(nd), tobe.push(nd);
+                    visited[nd] = 1, gvisited[nd] = 1;
+                    union_sets(curr, nd);
                 }
             }
         }
-        // cout << curr << "\n";
+        cout << "\n";
         // Index maxes of unions into an array, join and 
         int un_max = find_set(j);
-        un_sum.push(parents[un_max].second);
+        un_sum.insert(parents[un_max].second);
     }
 
-    for (int j = q; j > 1; j--) {
-        ans.push(un_sum.top());
+    // parent printer
+    for (int i = 0; i++ < n;)
+        cout << parents[i].first << " " << parents[i].second << "\n";
+    cout << "\n";
+
+    // un_sum printer
+    /*
+    for (int i = un_sum.top(); !un_sum.empty(); un_sum.pop(), i = un_sum.top())
+        cout << i << " ";
+    cout << "\n";
+    */
+
+    for (int j = q; j > 0; j--) {
+        cout << *un_sum.begin() << " ";
+        ans.push(*un_sum.begin());
         if (op == 'D') {
             x = rds[Ks[j]][0], y = rds[Ks[j]][1];
             x = find_set(x), y = find_set(y);
+            if (x == y) 
+                continue;
+            un_sum.erase(un_sum.find(parents[x].second));
+            un_sum.erase(un_sum.find(parents[y].second));
             // CHECK THAT THESE ARE IN SYNC
             union_sets(x, y);
-            un_sum.push(parents[x].second);
-            un_sum.push(parents[y].second);
+            if (ranks[x] < ranks[y])
+                swap(x, y);
+            // multiset erases all instances of a value if remove by value
+            // so here we use erase by iterator to remove first
+            un_sum.insert(parents[x].second);
         } else if (op == 'P') {
             a = As[j], k = find_set(a);
             // CHECK THAT THESE ARE IN SYNC
+            //
+            // TODO: IT IS NOT CURRENTLY IN SYNC
+            // USE 0 IDX OF Ks ARR FOR THE ORIGINAL POP
+            un_sum.erase(un_sum.find(parents[k].second));
             parents[k].second += xs[j] - pops[a];
-            un_sum.push(parents[k].second);
+            un_sum.insert(parents[k].second);
+            pops[a] = Ks[j];
         }
+        cout << "\n";
     }
+
+    for (ll i : un_sum)
+        cout << i << " ";
+    cout << "\n";
     
     arr_print(ans);
 
