@@ -61,6 +61,40 @@ int main() {
     // Will still make this total runtime exponential (still a sizeable factor of 1 << 200)
     //
     // Current determined param: num_stu, dif_sum (standard KS params)
+    //
+    // The typical KS (max) would have a recurrence of
+    //  if (k - as[i] > 0)
+    //      DP[i][k] += max(DP[i - 1][k - as[i]] + v[i], DP[i][k - 1]);
+    // 
+    // Counting is much more complex, since all cases must be considered
+    // Specifically made harder due to n being larger than 64 
+    // (n = 200 on the surface, but actually somewhere between 200 and 200C2)
+    // Therefore preprocessing (like trailing sum) is not realistic
+    //
+    
+    // UPDATE: We could initialize from when all students are in groups
+    // that contains them individually.
+    //
+    // We then start to unionize them
+    // Each loop we could unionize the two groups.
+    // index in order: groups done, groups that contains one member (unit group), total imbalance 
+    
+    /*
+    KS_rec(i, g, k):
+        if (g == 200)
+            # max bound hit, stack ceases to grow
+            return 0
+        if (g == 1)
+            # recursion done, KS finishes
+            return 0
+        new_k = g * as[i - 1]
+        if (new_k <= k_lim):
+            KS_rec(i + 1, g - 1, new_k)
+            KS_rec(i + 1, g, new_k)
+            KS_rec(i + 1, g + 1, new_k)
+        DP[i][j][k]++
+
+    */
 
     return 0;
 }
