@@ -18,26 +18,38 @@ void arr_print(array<array<int, nMAX>, MAX> z, int m) {
     } cout << "\n";
 }
 
-void arr_print(array<int, MAX> z, int s, int f) {                                                                       
+void arr_print(array<int, nMAX> z, int s, int f) {                                                                       
     for (int i = s; i < f; i++)
         cout << z[i] << " ";                                                                                            
 }
 
-int n, k, a;
+int n, k_lim, a;
 array<int, nMAX> as{};
-array<array<int, nMAX>, nMAX> diff{};
-array<array<ll, nMAX>, kMAX> DP{};
+int DP[nMAX][nMAX][kMAX];
 ll sum = 0ll, cnt = 0ll;
 
-ll KS(int i, int j, ll curr_k) {
-    if (i == n && j == n)
-        return 0;
 
-    return 0;
-}
+ll KS_r(int i, int g, int k) {
+    ll res = 0;
 
-ll KS_r(int i, int j, ll curr_k) {
-    return 0;
+    if (g >= n || k > k_lim) return 0;
+
+    if (i > n) return (g == 0);
+
+    if (DP[i][g][k] != -1) return DP[i][g][k];
+        
+    if (g == 0) {
+        res += KS_r(i + 1, 1, k), res %= nMOD;
+        res += KS_r(i + 1, 0, k), res %= nMOD;
+    } else {
+        int new_k = k + g * (as[i] - as[i - 1]);
+        // UPDATE: Do lower order (un-union) first
+        res += KS_r(i + 1, g + 1, new_k), res %= nMOD;
+        // Union coefficient is `g`
+        res += g * KS_r(i + 1, g - 1, new_k), res %= nMOD;
+        res += (g + 1) * KS_r(i + 1, g, new_k), res %= nMOD;
+    }
+    return DP[i][g][k] = res;
 }
 
 int main() {
@@ -45,9 +57,14 @@ int main() {
     cin.tie(nullptr);
 
     // ======== Main begins here ========
-    cin >> n >> k;
+    cin >> n >> k_lim;
     for (int i = 0; i++ < n;) cin >> as[i];
-    sort(as.begin(), as.begin() + n);
+    sort(as.begin(), as.begin() + (n + 1));
+
+    for (int i = 0; i < n + 1; i++)
+        for (int g = 0; g < n + 1; g++)
+            for (int k = 0; k < k_lim + 1; k++)
+                DP[i][g][k] = -1;
 
     // The total imbalance is equivalent to sum of all ranges
     // Start from minimum and check if greatest diff is less than k
@@ -77,24 +94,57 @@ int main() {
     //
     // We then start to unionize them
     // Each loop we could unionize the two groups.
-    // index in order: groups done, groups that contains one member (unit group), total imbalance 
+    // 
+    // We could use DFS to represent the traversal of selecting which ones to unionize
+    // By each unit group is seen as a node, a "visit" is making that node do 3 operations
+    // Union (g - 1, tot unit group decreases), De-union (g + 1, tot unit group increases)
+    //
+    // And we have 3 cases:
+    //  - Deunion (open a group):   There is only one way to deunion current member from its group
+    //  - Union (close a group):    There are g groups that the current member can join into
+    //  - Dont union (not closing): The group can stay singular (1), or keep opened (g).
     
     /*
-    KS_rec(i, g, k):
-        if (g == 200)
-            # max bound hit, stack ceases to grow
+    res = 0
+    KS_r(i, g, k):
+        # max bound hit, stack ceases to grow
+        if (g > n)
             return 0
-        if (g == 1)
-            # recursion done, KS finishes
-            return 0
-        new_k = g * as[i - 1]
-        if (new_k <= k_lim):
-            KS_rec(i + 1, g - 1, new_k)
-            KS_rec(i + 1, g, new_k)
-            KS_rec(i + 1, g + 1, new_k)
-        DP[i][j][k]++
 
+        # (a path) of nodes traversed, return if there are still unit nodes.
+        if (i > n)
+            return (g == 1)
+
+        # returned inited memoizer
+        if (DP[i][j][k] != -1) return DP[i][j][k]
+        
+        if (g == 1)
+            # init for each-level DFS
+            res += KS_r(i + 1, 2, k); res %= nMOD
+            res += KS_r(i + 1, 1, k); res %= nMOD
+            return res;
+
+        new_k = g * (as[i] - as[i - 1])
+        if (new_k <= k_lim)
+            res += KS_r(i + 1, g + 1, new_k); res %= nMOD
+            res += g * KS_r(i + 1, g - 1, new_k); res %= nMOD
+            res += (g + 1) * KS_r(i + 1, g, new_k); res %= nMOD
+        DP[i][g][k] = res
     */
 
-    return 0;
+    sum = KS_r(1, 0, 0);
+
+    /*
+    for (int i = 0; i++ < n + 1;) {
+        cout << "\n========================================\n";
+        for (int g = 0; g < n + 1; g++) {
+            for (int k = 0; k < k_lim + 1; k++)
+                cout << DP[i][g][k] << " ";
+            cout << "\n";
+        }
+    }
+
+    cout << "\n========================================\n";
+    */
+    return cout << sum << "\n", 0;
 }
