@@ -15,6 +15,7 @@ using namespace std;
 // Edit based on given Qs
 const int nMOD = (int) 1e9 + 7;
 const ll MAX = 1e5 + 5;
+const int aMAX = 1e6 + 5;
 
 // vector<int> DP(MAX);
 // vector<vector<int>> DP(MAX, vector<int> MAX);
@@ -56,7 +57,8 @@ struct custom_hash {
 // ======== Global variables begin here ========
 // =============================================
 
-
+int n, a;
+int as[MAX], DP[aMAX];
 
 // =============================================
 // ======== Custom functiobugs begin here ========
@@ -87,8 +89,47 @@ int main() {
     cin.tie(nullptr);
 
     // ======== Main begins here ========
+    cin >> n;
+    as[0] = 0;
+    for (int i = 0; i < n; i++) cin >> as[i];
+
+    // DP relations
+    // We denote the beginningo f a subsequence as the major index
+    // Since a sequence of length 1 is always valid.
+    //
+    // Then for each iteration, for each valid continuation we plus one.
+    // This is npt however viable, since to "DP" we need to be able to share computed values
+    // But a buttom-up approach cannnot utilize that.
+    // At the same time it is not possible to top-down because we need to maintain the order of the sequence
+    // Without knowing the starting point we cannot do so.
+    //
+    // Therefore, we would alter our DP scheme to enable top-down and memoization
+    // By encoding the major index as the ending index, and the minor index as the deisred length
+    // 
+    // And we have recurrence of,
     
+    /*
+     *  # Note i is 1-indexed
+     *  if (as[i] % j)
+     *      DP[i][j] = DP[i-1][j] + DP[i-1][j-1]
+     *  else
+     *      DP[i][j] = DP[i-1][j]
+     */
 
-
+    // It is noticeable however a 1e5 x 1e6 array will defnintely exceed mem limit.
+    // We would seek to reduce this to 1-D
+    // Since we could find factors of a number in O(sqrt(n)) time, we could abandon
+    // the [i] index and only encode the array based on its length.
+    //
+    
+    for (;n--;) {
+        for (int j = 1; j * j <= as[n]; j++) {
+            if (as[n] % j) continue;
+            DP[j] = (DP[j] + 1 + DP[j + 1]) % nMOD;
+            if (j == as[n] / j) continue;
+            DP[as[n] / j] = (DP[as[n] / j] + 1 + DP[as[n] / j + 1]) % nMOD;
+        }
+    }
+    cout << as[1] << "\n";
     return 0;
 }
