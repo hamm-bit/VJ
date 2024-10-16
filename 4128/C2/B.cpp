@@ -87,21 +87,28 @@ int main() {
     for (int i = 0; i <= r-klim; i++) {
         for (int j = 0; j <= c-klim; j++) {
             bool flag = false;
-            auto it_l = lower_bound(as.begin(), as.begin() + r * c, bounds[i][j].second, 
-            [](const std::pair<int, std::string>& a, const std::pair<int, std::string>& b) {
+
+            // Find left and right barrier of the "potentail segment"
+            pair<int, int> tmp = make_pair(bounds[i][j].second, 0);
+            auto it_l = lower_bound(as.begin(), as.begin() + r * c, tmp, 
+            [](pair<int, int> a, pair<int, int> b) {
                 return a.first < b.first;
             });
-            auto it_r = upper_bound(as.begin(), as.begin() + r * c, bounds[i][j].first, 
-            [](const std::pair<int, std::string>& a, const std::pair<int, std::string>& b) {
+            tmp = make_pair(bounds[i][j].first, 0);
+            auto it_r = upper_bound(as.begin(), as.begin() + r * c, tmp, 
+            [](pair<int, int> a, pair<int, int> b) {
                 return a.first > b.first;
             });
             
+            // Search all elements between left and right endpoints
             int it_i = it_l->second >> 10, it_j = it_l->second & 0x3FF;
-            if (it_i > i && it_i < i && it_j > j && it_j < j) flag = true;
+            if (it_i < i || it_i >= i+klim || it_j < j || it_j >= j+klim) flag = true;
             for (auto it = it_l; it++ != it_r;) {
                 it_i = it->second >> 10, it_j = it->second & 0x3FF;
-                if (it_i > i && it_i < i && it_j > j && it_j < j) flag = true;
+                if (it_i < i || it_i >= i+klim || it_j < j || it_j >= j+klim) flag = true;
             }
+            it_i = it_r->second >> 10, it_j = it_r->second & 0x3FF;
+            if (it_i < i || it_i >= i+klim || it_j < j || it_j >= j+klim) flag = true;
 
             if (!flag) outi = i, outj = j;
         }
