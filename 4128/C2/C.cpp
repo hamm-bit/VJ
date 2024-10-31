@@ -10,14 +10,14 @@ long long fact(int i) {
 
 int main() {
     int n;
-    cin >> n;
+    cin >> n, n++;
     MODDP[0] = 1ll;
-    long long ans = fact(n+1);
+    long long ans = fact(n);
     
     // Inclusion exclusion
     int sign = -1;
     for (int i = 2; i <= n+1; i++) {
-        long long tmp = (fact(n+2-i) * (n+2-i)) % nMOD;
+        long long tmp = (fact(n+1-i) * (n+1-i)) % nMOD;
         ans += tmp * sign;
         cout << ans << "\n";
         sign = -sign;
