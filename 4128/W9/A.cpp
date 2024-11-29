@@ -22,9 +22,9 @@ void arr_print(array<array<int, nMAX>, MAX> z, int m) {
     } cout << "\n";
 }
 
-void arr_print(array<int, MAX> z, int s, int f) {                                                                       
+void arr_print(array<int, MAX> z, int s, int f) {
     for (int i = s; i < f; i++)
-        cout << z[i] << " ";                                                                                            
+        cout << z[i] << " ";
 }
 
 vector<ll> pow2mod(MAX);
