@@ -22,6 +22,18 @@ void arr_print(array<int, MAX> z, int s, int f) {
         cout << z[i] << " ";                                                                                            
 }
 
+vector<ll> pow2mod(MAX);
+
+ll binpow(ll a, ll b) {
+    if (pow2mod[b] != 0)
+        return pow2mod[b];
+    ll res = binpow(a, b / 2);
+    if (b % 2)
+        return pow2mod[b] = (res * res * a) % nMOD;
+    else
+        return pow2mod[b] = (res * res) % nMOD;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
